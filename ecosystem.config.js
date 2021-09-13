@@ -1,6 +1,7 @@
 module.exports = {
-  apps : [{
-    name   : "app1",
-    script : "./app.js"
+  apps: [{
+    name: "graphic interface",
+    script: "npm",
+    args: "start"
   }]
 }
