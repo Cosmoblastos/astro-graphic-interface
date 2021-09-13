@@ -27,23 +27,40 @@ const Eye = ({
 
 };
 
+const normalSize = "120px";
+const bigSize = "170px";
+const normalXTranslate = "20px";
+const normalYTranslate = "20px";
+
 const FaceView = ({ }) => {
 
-    const { voiceDetected, setVoiceDetected } = useWebsocket();
+    const { voiceDetected, setVoiceDetected, voiceCommand, setVoiceCommand } = useWebsocket();
 
-    const [leftWidth, setLeftWidth] = useState("100px"),
-        [leftHeight, setLeftHeight] = useState("100px"),
-        [rightWidth, setRightWidth] = useState("100px"),
-        [rightHeight, setRightHeight] = useState("100px"),
-        [leftTranslateX, setLeftTranslateX] = useState("-10px"),
-        [rightTranslateX, setRightTranslateX] = useState("10px");
+    const [leftWidth, setLeftWidth] = useState(normalSize),
+        [leftHeight, setLeftHeight] = useState(normalSize),
+        [rightWidth, setRightWidth] = useState(normalSize),
+        [rightHeight, setRightHeight] = useState(normalSize),
+        [leftTranslateX, setLeftTranslateX] = useState("-" + normalXTranslate),
+        [rightTranslateX, setRightTranslateX] = useState(normalXTranslate),
+        [leftTranslateY, setLeftTranslateY] = useState("-" + normalYTranslate),
+        [rightTranslateY, setRightTranslateY] = useState("-" + normalYTranslate);
 
     useEffect(() => {
-        blinkRight();
-        blinkLeft();
-        //surprise();
-        //shake();
-    }, []);
+        const blinking = setInterval(() => {
+            setLeftHeight("0px");
+            setRightHeight("0px");
+
+            setTimeout(() => {
+                setLeftHeight(normalSize);
+                setRightHeight(normalSize);
+            }, 300);
+
+        }, 8000);
+
+        return () => {
+            clearInterval(blinking);
+        }
+    }, [voiceDetected]);
 
     useEffect(() => {
         if (voiceDetected === 'astro') {
@@ -51,84 +68,71 @@ const FaceView = ({ }) => {
         }
     }, [voiceDetected]);
 
-    const blinkLeft = () => {
-
-        const blinking = setInterval(() => {
-            setLeftHeight("0px");
-
-            setTimeout(() => {
-                setLeftHeight("100px");
-            }, 300);
-
-        }, 8000);
-
-        return () => {
-            clearInterval(blinking);
+    useEffect(() => {
+        if (voiceCommand === 'hora') {
+            shake();
         }
-    }
-
-    const blinkRight = () => {
-
-        const blinking = setInterval(() => {
-            setRightHeight("0px");
-
-            setTimeout(() => {
-                setRightHeight("100px");
-            }, 300);
-
-        }, 8000);
-
-        return () => {
-            clearInterval(blinking);
-        }
-
-    }
+    })
 
     const surprise = () => {
-        setLeftHeight("150px");
-        setLeftWidth("150px");
+        setLeftHeight(bigSize);
+        setLeftWidth(bigSize);
 
         setTimeout(() => {
-            setLeftHeight("100px");
-            setLeftWidth("100px");
+            setLeftHeight(normalSize);
+            setLeftWidth(normalSize);
         }, [1500]);
     };
 
     const listen = () => {
-        setLeftHeight("150px");
-        setLeftWidth("150px");
+        setLeftHeight(bigSize);
+        setLeftWidth(bigSize);
 
-        setRightHeight("150px");
-        setRightWidth("150px");
+        setRightHeight(bigSize);
+        setRightWidth(bigSize);
+
+        setLeftTranslateY("30px");
+        setRightTranslateY("30px");
 
         setTimeout(() => {
-            setLeftHeight("100px");
-            setLeftWidth("100px");
+            setLeftHeight(normalSize);
+            setLeftWidth(normalSize);
 
-            setRightHeight("100px");
-            setRightWidth("100px");
+            setRightHeight(normalSize);
+            setRightWidth(normalSize);
+
+            setLeftTranslateY("-" + normalYTranslate);
+            setRightTranslateY("-" + normalYTranslate);
 
             setVoiceDetected(null);
         }, [4000]);
     };
 
     const shake = () => {
-        const shaking = setInterval(() => {
-            for (let i = 0; i <= 5; i++) {
-                setTimeout(() => {
-                    const leftX = `-${randomNumber(0, 25)}px`,
-                        rightX = `${randomNumber(0, 25)}px`;
-
-                    setLeftTranslateX(leftX);
-                    setRightTranslateX(rightX);
-                }, [100 * i]);
-            }
-
+        for (let i = 0; i <= 5; i++) {
             setTimeout(() => {
-                setLeftTranslateX("-10px");
-                setRightTranslateX("10px");
-            }, 600);
-        }, [5000])
+                const leftX = `-${randomNumber(0, 25)}px`,
+                    rightX = `${randomNumber(0, 25)}px`,
+                    leftY = `-${randomNumber(0, 25)}px`,
+                    rightY = `-${randomNumber(0, 25)}px`;
+
+                setLeftTranslateX(leftX);
+                setRightTranslateX(rightX);
+
+                setLeftTranslateY(leftY);
+                setRightTranslateY(rightY);
+            }, [100 * i]);
+        }
+
+        setTimeout(() => {
+            setLeftTranslateX("-" + normalXTranslate);
+            setRightTranslateX(normalXTranslate);
+
+            setLeftTranslateY("-" + normalYTranslate);
+            setRightTranslateY("-" + normalYTranslate);
+
+            setVoiceCommand(null);
+        }, 600);
     };
 
     const randomNumber = (min, max) => {
@@ -144,12 +148,14 @@ const FaceView = ({ }) => {
                         width={leftWidth}
                         height={leftHeight}
                         translateX={leftTranslateX}
+                        translateY={leftTranslateY}
                     />
                     <Eye
                         transition={"all 0.4s"}
                         width={rightWidth}
                         height={rightHeight}
                         translateX={rightTranslateX}
+                        translateY={rightTranslateY}
                     />
                 </div>
             </div>
