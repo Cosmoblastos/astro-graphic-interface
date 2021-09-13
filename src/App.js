@@ -1,12 +1,12 @@
 import "./App.css";
-import { SerialPortProvider } from "./contexts/serialport";
 import MainView from "./views/MainView/MainView";
 import { RadarView } from "./views/RadarView";
 import { FaceView } from "./views/FaceView";
+import { WebsocketProvider } from "./contexts/websocket";
 
 function App() {
   return (
-    <SerialPortProvider>
+    <WebsocketProvider>
       <div className="App">
         <header className="App-header">
           {/*<MainView />*/}
@@ -14,7 +14,7 @@ function App() {
           <FaceView />
         </header>
       </div>
-    </SerialPortProvider>
+    </WebsocketProvider>
   );
 }
 

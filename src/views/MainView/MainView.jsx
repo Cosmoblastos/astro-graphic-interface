@@ -1,14 +1,10 @@
 import React from "react";
 import "./MainView.css";
-import { useSerialPort } from "../../contexts/serialport";
-import DataIncome from "../../components/DataIncome/DataIncome";
-import PortList from "../../components/PortList/PortList";
 import Face from "../../components/Face/Face";
 import Camera from "../../components/Camera/Camera";
 import Robot from "../../components/Robot/Robot";
 
 const MainView = () => {
-  const { port } = useSerialPort();
 
   return (
     <>

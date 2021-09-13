@@ -1,6 +1,7 @@
 import React from 'react';
 import './FaceView.css';
 import { useState, useEffect } from 'react';
+import { useWebsocket } from '../../contexts/websocket';
 
 const Eye = ({
     width = "100px",
@@ -28,6 +29,8 @@ const Eye = ({
 
 const FaceView = ({ }) => {
 
+    const { voiceDetected } = useWebsocket();
+
     const [leftWidth, setLeftWidth] = useState("100px"),
         [leftHeight, setLeftHeight] = useState("100px"),
         [rightWidth, setRightWidth] = useState("100px"),
@@ -38,9 +41,15 @@ const FaceView = ({ }) => {
     useEffect(() => {
         blinkRight();
         blinkLeft();
-        surprise();
+        //surprise();
         //shake();
     }, []);
+
+    useEffect(() => {
+        if (voiceDetected) {
+            listen();
+        }
+    }, [voiceDetected]);
 
     const blinkLeft = () => {
 
@@ -76,19 +85,29 @@ const FaceView = ({ }) => {
     }
 
     const surprise = () => {
-        const surprising = setInterval(() => {
-            setLeftHeight("150px");
-            setLeftWidth("150px");
+        setLeftHeight("150px");
+        setLeftWidth("150px");
 
-            setTimeout(() => {
-                setLeftHeight("100px");
-                setLeftWidth("100px");
-            }, [1500]);
-        }, 7000);
+        setTimeout(() => {
+            setLeftHeight("100px");
+            setLeftWidth("100px");
+        }, [1500]);
+    };
 
-        return () => {
-            clearInterval(surprising);
-        }
+    const listen = () => {
+        setLeftHeight("150px");
+        setLeftWidth("150px");
+
+        setRightHeight("150px");
+        setRightWidth("150px");
+
+        setTimeout(() => {
+            setLeftHeight("100px");
+            setLeftWidth("100px");
+
+            setRightHeight("100px");
+            setRightWidth("100px");
+        }, [1500]);
     };
 
     const shake = () => {
