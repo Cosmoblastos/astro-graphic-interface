@@ -29,7 +29,7 @@ const Eye = ({
 
 const FaceView = ({ }) => {
 
-    const { voiceDetected } = useWebsocket();
+    const { voiceDetected, setVoiceDetected } = useWebsocket();
 
     const [leftWidth, setLeftWidth] = useState("100px"),
         [leftHeight, setLeftHeight] = useState("100px"),
@@ -46,7 +46,7 @@ const FaceView = ({ }) => {
     }, []);
 
     useEffect(() => {
-        if (voiceDetected) {
+        if (voiceDetected === 'astro') {
             listen();
         }
     }, [voiceDetected]);
@@ -76,7 +76,7 @@ const FaceView = ({ }) => {
                 setRightHeight("100px");
             }, 300);
 
-        }, 4000);
+        }, 8000);
 
         return () => {
             clearInterval(blinking);
@@ -107,7 +107,9 @@ const FaceView = ({ }) => {
 
             setRightHeight("100px");
             setRightWidth("100px");
-        }, [1500]);
+
+            setVoiceDetected(null);
+        }, [4000]);
     };
 
     const shake = () => {
