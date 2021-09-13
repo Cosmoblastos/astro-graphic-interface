@@ -72,7 +72,7 @@ const FaceView = ({ }) => {
         if (voiceCommand === 'hora') {
             shake();
         }
-    })
+    }, [voiceCommand]);
 
     const surprise = () => {
         setLeftHeight(bigSize);
