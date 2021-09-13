@@ -60,7 +60,7 @@ const FaceView = ({ }) => {
                 setLeftHeight("100px");
             }, 300);
 
-        }, 4000);
+        }, 8000);
 
         return () => {
             clearInterval(blinking);
