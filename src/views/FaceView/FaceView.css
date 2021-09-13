@@ -1,0 +1,16 @@
+.eye {
+    background: aqua;
+    border: none;
+    border-radius: 35px;
+}
+
+.face {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: white 1px solid;
+    width: 80vw;
+    height: 60vh;
+    padding: 10px;
+    border-radius: 35px;
+}

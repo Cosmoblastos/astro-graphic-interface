@@ -1,0 +1,34 @@
+.portsWrapper {
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  background-color: white;
+  color: rgb(92, 91, 91);
+  border-radius: var(--with-radius);
+  padding: 20px 30px;
+}
+
+.portsWrapper .list {
+  border: 1px solid rgb(216, 212, 212);
+  border-radius: var(--with-radius);
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin: 10px 0;
+}
+
+.portsWrapper .list .item {
+  border-bottom: 1px solid rgb(216, 212, 212);
+  width: 90%;
+  cursor: pointer;
+}
+
+.portsWrapper button {
+  margin: 10px 0;
+}

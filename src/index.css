@@ -1,0 +1,66 @@
+:root {
+  /* Colors */
+  --app-tint: #12738e;
+  --destructive-red: #ff3b30;
+  --white: #fff;
+  --dark-black: #212121;
+  --black: #4a4a4a;
+  --grey: #888b90;
+  --silver: #dcdcdf;
+  --blue: #282c34;
+
+  --alpha-005: rgba(0, 0, 0, 0.05);
+  --alpha-01: rgba(0, 0, 0, 0.1);
+  --alpha-015: rgba(0, 0, 0, 0.15);
+  --alpha-05: rgba(0, 0, 0, 0.5);
+
+  /* Fonts */
+  --main-font: "Avenir Next", "Avenir", "Futura", "Lucida Grande", Helvetica,
+    Arial, Verdana, sans-serif;
+  --line-height: 1.38636;
+
+  /* Borders */
+  --with-border: 1px solid var(--alpha-01);
+  --with-border--dark: 1px solid var(--alpha-015);
+
+  --with-radius--small: 6px;
+  --with-radius: 8px;
+  --with-radius--large: 10px;
+
+  /* Shadows */
+  --with-shadow: 0 2px 8px 0 var(--alpha-005);
+  --with-shadow--hover: 0 2px 8px 0 var(--alpha-005),
+    0 4px 16px 0 var(--alpha-005), 0 8px 32px 0 var(--alpha-005);
+
+  --with-shadow--raised: 0 2px 8px 0 var(--alpha-015);
+  --with-shadow--raised--hover: 0 2px 8px 0 var(--alpha-015),
+    0 4px 16px 0 var(--alpha-015), 0 8px 32px 0 var(--alpha-015);
+
+  --with-shadow--alert: 0 24px 38px 0 var(--alpha-015);
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+p {
+  font-size: 16px;
+}
+
+button {
+  font-size: 14px;
+}
+
+h2 {
+  font-size: 18px;
+}
