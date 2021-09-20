@@ -4,8 +4,9 @@ import './VideoStreaming.css';
 const VideoStreaming = ({img}) =>{
 
     return (
-        <div>
+        <div className="videostreming-wrapper">
             <img
+                className="videostreaming-img"
                 src={`data:image/jpg;base64, ${img}`}
             />
         </div>
