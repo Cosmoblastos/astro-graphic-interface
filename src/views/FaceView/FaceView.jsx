@@ -2,6 +2,7 @@ import React from 'react';
 import './FaceView.css';
 import { useState, useEffect } from 'react';
 import { useWebsocket } from '../../contexts/websocket';
+import {VideoStreaming} from "../../components/VideoStreaming";
 
 const Eye = ({
     width = "100px",
@@ -34,7 +35,15 @@ const normalYTranslate = "20px";
 
 const FaceView = ({ }) => {
 
-    const { voiceDetected, setVoiceDetected, voiceCommand, setVoiceCommand } = useWebsocket();
+    const {
+        voiceDetected,
+        setVoiceDetected,
+        voiceCommand,
+        setVoiceCommand,
+        img,
+        setImg,
+        isRecording,
+    } = useWebsocket();
 
     const [leftWidth, setLeftWidth] = useState(normalSize),
         [leftHeight, setLeftHeight] = useState(normalSize),
@@ -70,9 +79,13 @@ const FaceView = ({ }) => {
 
     useEffect(() => {
         if (voiceCommand === 'hora') {
-            shake();
+            //shake();
         }
     }, [voiceCommand]);
+
+    useEffect(() => {
+        if(!isRecording) setImg(null);
+    }, [isRecording]);
 
     const surprise = () => {
         setLeftHeight(bigSize);
@@ -142,22 +155,29 @@ const FaceView = ({ }) => {
     return (
         <>
             <div>
-                <div className="face">
-                    <Eye
-                        transition={"all 0.4s"}
-                        width={leftWidth}
-                        height={leftHeight}
-                        translateX={leftTranslateX}
-                        translateY={leftTranslateY}
-                    />
-                    <Eye
-                        transition={"all 0.4s"}
-                        width={rightWidth}
-                        height={rightHeight}
-                        translateX={rightTranslateX}
-                        translateY={rightTranslateY}
-                    />
-                </div>
+                {
+                    !isRecording &&
+                    <div className="face">
+                        <Eye
+                            transition={"all 0.4s"}
+                            width={leftWidth}
+                            height={leftHeight}
+                            translateX={leftTranslateX}
+                            translateY={leftTranslateY}
+                        />
+                        <Eye
+                            transition={"all 0.4s"}
+                            width={rightWidth}
+                            height={rightHeight}
+                            translateX={rightTranslateX}
+                            translateY={rightTranslateY}
+                        />
+                    </div>
+                }
+                {
+                    isRecording &&
+                    <VideoStreaming img={img} />
+                }
             </div>
         </>
     );

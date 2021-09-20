@@ -13,9 +13,12 @@ const baseUrl = "http://localhost:65000";
 const socket = socketIOClient(baseUrl, { transports: ['websocket', 'polling', 'flashsocket'] });
 
 const channels = {
-    image: 'image',
+    videoStreaming: 'videoStreaming',
     voiceDetected: 'voiceDetected',
     voiceCommand: 'voiceCommand',
+    faceRecognition: 'faceRecognition',
+    faceIdentification: 'faceIdentification'
+
 }
 
 const WebsocketContext = React.createContext();
@@ -23,7 +26,9 @@ const WebsocketContext = React.createContext();
 const WebsocketProvider = ({ ...rest }) => {
 
     const [voiceDetected, setVoiceDetected] = useState(false),
-        [voiceCommand, setVoiceCommand] = useState('');
+        [voiceCommand, setVoiceCommand] = useState(''),
+        [img, setImg] = useState(null),
+        [isRecording, setIsRecording] = useState(false);
 
     useEffect(() => {
         socket.on(channels.voiceCommand, data => {
@@ -36,17 +41,38 @@ const WebsocketProvider = ({ ...rest }) => {
             setVoiceDetected(data);
         });
 
+        socket.on(channels.videoStreaming, data => {
+            console.log("Video Streaming", data);
+            setImg(data);
+        });
+
+        socket.on(channels.faceRecognition, data => {
+            console.log("Face recognition", data);
+            setIsRecording(true);
+        });
+
+        socket.on(channels.faceIdentification, data => {
+            console.log("Face identificación", data);
+            setIsRecording(false);
+        });
+
         return () => {
             socket.off(channels.voiceCommand);
             socket.off(channels.voiceDetected);
+            socket.off(channels.videoStreaming);
+
         }
-    }, [setVoiceCommand]);
+    }, [setVoiceCommand, setImg]);
 
     const value = {
         voiceCommand,
         setVoiceCommand,
         voiceDetected,
         setVoiceDetected,
+        img,
+        setImg,
+        setIsRecording,
+        isRecording,
     };
 
     return <WebsocketContext.Provider value={value} {...rest} />;
