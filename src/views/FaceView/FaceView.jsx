@@ -1,8 +1,10 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import './FaceView.css';
 import { useState, useEffect } from 'react';
-import { useWebsocket } from '../../contexts/websocket';
 import {VideoStreaming} from "../../components/VideoStreaming";
+import {useSubscription} from "@apollo/client";
+import { gql } from '@apollo/client';
+import ReactPlayer from 'react-player'
 
 const Eye = ({
     width = "100px",
@@ -33,18 +35,21 @@ const bigSize = "170px";
 const normalXTranslate = "20px";
 const normalYTranslate = "20px";
 
-const FaceView = ({ }) => {
+const COMMANDS_SUBSCRIPTION = gql`
+    subscription voiceEvents {
+        voiceEvents {
+            type
+            payload
+        }
+    }
+`;
 
-    const {
-        voiceDetected,
-        setVoiceDetected,
-        voiceCommand,
-        setVoiceCommand,
-        img,
-        setImg,
-        isRecording,
-    } = useWebsocket();
+const randomNumber = (min, max) => {
+    return Math.floor(Math.random() * (max - min) + min);
+}
 
+const FaceView = () => {
+    const {loading, data, error} = useSubscription(COMMANDS_SUBSCRIPTION);
     const [leftWidth, setLeftWidth] = useState(normalSize),
         [leftHeight, setLeftHeight] = useState(normalSize),
         [rightWidth, setRightWidth] = useState(normalSize),
@@ -52,7 +57,9 @@ const FaceView = ({ }) => {
         [leftTranslateX, setLeftTranslateX] = useState("-" + normalXTranslate),
         [rightTranslateX, setRightTranslateX] = useState(normalXTranslate),
         [leftTranslateY, setLeftTranslateY] = useState("-" + normalYTranslate),
-        [rightTranslateY, setRightTranslateY] = useState("-" + normalYTranslate);
+        [rightTranslateY, setRightTranslateY] = useState("-" + normalYTranslate),
+        [showVideo, setShowVideo] = useState(false),
+        [playing, setPlaying] = useState(false);
 
     useEffect(() => {
         const blinking = setInterval(() => {
@@ -69,23 +76,7 @@ const FaceView = ({ }) => {
         return () => {
             clearInterval(blinking);
         }
-    }, [voiceDetected]);
-
-    useEffect(() => {
-        if (voiceDetected === 'astro') {
-            listen();
-        }
-    }, [voiceDetected]);
-
-    useEffect(() => {
-        if (voiceCommand === 'hora') {
-            //shake();
-        }
-    }, [voiceCommand]);
-
-    useEffect(() => {
-        if(!isRecording) setImg(null);
-    }, [isRecording]);
+    }, []);
 
     const surprise = () => {
         setLeftHeight(bigSize);
@@ -117,7 +108,7 @@ const FaceView = ({ }) => {
             setLeftTranslateY("-" + normalYTranslate);
             setRightTranslateY("-" + normalYTranslate);
 
-            setVoiceDetected(null);
+            //setVoiceDetected(null);
         }, [4000]);
     };
 
@@ -144,44 +135,77 @@ const FaceView = ({ }) => {
             setLeftTranslateY("-" + normalYTranslate);
             setRightTranslateY("-" + normalYTranslate);
 
-            setVoiceCommand(null);
+            //setVoiceCommand(null);
         }, 600);
     };
 
-    const randomNumber = (min, max) => {
-        return Math.floor(Math.random() * (max - min) + min);
-    }
+    useEffect(() => {
+        if (loading) return;
+        if (error) return console.error(error);
+        const eventName = data?.voiceEvents?.type;
+        if (!eventName) return;
 
-    return (
-        <>
-            <div>
-                {
-                    !isRecording &&
-                    <div className="face">
-                        <Eye
-                            transition={"all 0.4s"}
-                            width={leftWidth}
-                            height={leftHeight}
-                            translateX={leftTranslateX}
-                            translateY={leftTranslateY}
-                        />
-                        <Eye
-                            transition={"all 0.4s"}
-                            width={rightWidth}
-                            height={rightHeight}
-                            translateX={rightTranslateX}
-                            translateY={rightTranslateY}
-                        />
-                    </div>
-                }
-                {
-                    isRecording &&
-                    <VideoStreaming img={img} />
-                }
-            </div>
-        </>
-    );
+        switch (eventName) {
+            case 'emergencia':
+                //cara de atención
+                //poner video de emergencia
+                listen();
+                setTimeout(() => {
+                    setShowVideo(true);
+                }, 1000);
+                break;
+            default:
+                console.log('Invalid voice comand');
+        }
+    }, [loading, data, error]);
 
+    useEffect(() => {
+        setTimeout(() => {
+            setPlaying(true);
+        }, 500);
+    }, [showVideo]);
+
+    const handleVideoEnded = useCallback(() => {
+        setPlaying(false);
+        setShowVideo(false);
+    }, []);
+
+    return <>
+        <div>
+            {
+                !showVideo &&
+                <div className="face">
+                    <Eye
+                        transition={"all 0.4s"}
+                        width={leftWidth}
+                        height={leftHeight}
+                        translateX={leftTranslateX}
+                        translateY={leftTranslateY}
+                    />
+                    <Eye
+                        transition={"all 0.4s"}
+                        width={rightWidth}
+                        height={rightHeight}
+                        translateX={rightTranslateX}
+                        translateY={rightTranslateY}
+                    />
+                </div>
+            }
+            {
+                showVideo &&
+                <div>
+                    <ReactPlayer
+                        playing={playing}
+                        width={'100%'}
+                        height={'100%'}
+                        url={'/emergencia.mp4'}
+                        controls
+                        onEnded={handleVideoEnded}
+                    />
+                </div>
+            }
+        </div>
+    </>;
 };
 
 export default FaceView;
