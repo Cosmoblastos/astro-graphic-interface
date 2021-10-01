@@ -6,7 +6,6 @@ import React, {
     useState,
     useRef
 } from "react";
-import axios from "axios";
 import socketIOClient from "socket.io-client";
 
 const baseUrl = "http://localhost:65000";
@@ -17,8 +16,8 @@ const channels = {
     voiceDetected: 'voiceDetected',
     voiceCommand: 'voiceCommand',
     faceRecognition: 'faceRecognition',
-    faceIdentification: 'faceIdentification'
-
+    faceIdentification: 'faceIdentification',
+    playVideo: 'playVideo'
 }
 
 const WebsocketContext = React.createContext();
@@ -28,7 +27,8 @@ const WebsocketProvider = ({ ...rest }) => {
     const [voiceDetected, setVoiceDetected] = useState(false),
         [voiceCommand, setVoiceCommand] = useState(''),
         [img, setImg] = useState(null),
-        [isRecording, setIsRecording] = useState(false);
+        [isRecording, setIsRecording] = useState(false),
+        [playVideoCommand, setPlayVideoCommand] = useState(null);
 
     useEffect(() => {
         socket.on(channels.voiceCommand, data => {
@@ -56,11 +56,18 @@ const WebsocketProvider = ({ ...rest }) => {
             setIsRecording(false);
         });
 
+        socket.on(channels.playVideo, data => {
+            console.log("Play video", data);
+            setPlayVideoCommand(data);
+        });
+
         return () => {
             socket.off(channels.voiceCommand);
             socket.off(channels.voiceDetected);
             socket.off(channels.videoStreaming);
-
+            socket.off(channels.faceIdentification);
+            socket.off(channels.faceRecognition);
+            socket.off(channels.playVideo);
         }
     }, [setVoiceCommand, setImg]);
 
@@ -73,6 +80,8 @@ const WebsocketProvider = ({ ...rest }) => {
         setImg,
         setIsRecording,
         isRecording,
+        playVideoCommand,
+        setPlayVideoCommand
     };
 
     return <WebsocketContext.Provider value={value} {...rest} />;

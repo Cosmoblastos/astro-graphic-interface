@@ -43,6 +43,8 @@ const FaceView = ({ }) => {
         img,
         setImg,
         isRecording,
+        playVideoCommand,
+        setPlayVideoCommand
     } = useWebsocket();
 
     const [leftWidth, setLeftWidth] = useState(normalSize),
@@ -86,6 +88,17 @@ const FaceView = ({ }) => {
     useEffect(() => {
         if(!isRecording) setImg(null);
     }, [isRecording]);
+
+    useEffect(() => {
+        if(playVideoCommand) {
+            if(playVideoCommand === 'emergency') showVideo();
+            setPlayVideoCommand(null);
+        }
+    }, [playVideoCommand]);
+
+    const showVideo = () => {
+
+    };
 
     const surprise = () => {
         setLeftHeight(bigSize);
