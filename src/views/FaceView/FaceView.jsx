@@ -3,6 +3,7 @@ import './FaceView.css';
 import { useState, useEffect } from 'react';
 import { useWebsocket } from '../../contexts/websocket';
 import {VideoStreaming} from "../../components/VideoStreaming";
+import ReactPlayer from 'react-player';
 
 const Eye = ({
     width = "100px",
@@ -54,7 +55,8 @@ const FaceView = ({ }) => {
         [leftTranslateX, setLeftTranslateX] = useState("-" + normalXTranslate),
         [rightTranslateX, setRightTranslateX] = useState(normalXTranslate),
         [leftTranslateY, setLeftTranslateY] = useState("-" + normalYTranslate),
-        [rightTranslateY, setRightTranslateY] = useState("-" + normalYTranslate);
+        [rightTranslateY, setRightTranslateY] = useState("-" + normalYTranslate),
+        [playVideo, setPlayVideo] = useState(false);
 
     useEffect(() => {
         const blinking = setInterval(() => {
@@ -97,8 +99,12 @@ const FaceView = ({ }) => {
     }, [playVideoCommand]);
 
     const showVideo = () => {
-
+        setPlayVideo(true);
     };
+
+    const handleVideoEnded = () => {
+        setPlayVideo(false);
+    }
 
     const surprise = () => {
         setLeftHeight(bigSize);
@@ -169,7 +175,7 @@ const FaceView = ({ }) => {
         <>
             <div>
                 {
-                    !isRecording &&
+                    (!isRecording || !playVideo) &&
                     <div className="face">
                         <Eye
                             transition={"all 0.4s"}
@@ -190,6 +196,19 @@ const FaceView = ({ }) => {
                 {
                     isRecording &&
                     <VideoStreaming img={img} />
+                }
+                {
+                    playVideo &&
+                    <div>
+                        <ReactPlayer
+                            playing={playVideo}
+                            width={'100%'}
+                            height={'100%'}
+                            url={'/emergencia.mp4'}
+                            controls
+                            onEnded={handleVideoEnded}
+                        />
+                    </div>
                 }
             </div>
         </>
