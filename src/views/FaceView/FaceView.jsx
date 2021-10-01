@@ -93,7 +93,8 @@ const FaceView = ({ }) => {
 
     useEffect(() => {
         if(playVideoCommand) {
-            if(playVideoCommand === 'emergency') showVideo();
+            console.log("Playing video");
+            showVideo();
             setPlayVideoCommand(null);
         }
     }, [playVideoCommand]);
