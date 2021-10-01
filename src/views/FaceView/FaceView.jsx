@@ -176,7 +176,7 @@ const FaceView = ({ }) => {
         <>
             <div>
                 {
-                    (!isRecording || !playVideo) &&
+                    (!isRecording && !playVideo) &&
                     <div className="face">
                         <Eye
                             transition={"all 0.4s"}
