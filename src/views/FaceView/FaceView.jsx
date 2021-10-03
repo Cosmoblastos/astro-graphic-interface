@@ -175,42 +175,9 @@ const FaceView = ({ }) => {
     return (
         <>
             <div>
-                {
-                    (!isRecording && !playVideo) &&
-                    <div className="face">
-                        <Eye
-                            transition={"all 0.4s"}
-                            width={leftWidth}
-                            height={leftHeight}
-                            translateX={leftTranslateX}
-                            translateY={leftTranslateY}
-                        />
-                        <Eye
-                            transition={"all 0.4s"}
-                            width={rightWidth}
-                            height={rightHeight}
-                            translateX={rightTranslateX}
-                            translateY={rightTranslateY}
-                        />
-                    </div>
-                }
-                {
-                    isRecording &&
-                    <VideoStreaming img={img} />
-                }
-                {
-                    playVideo &&
-                    <div>
-                        <ReactPlayer
-                            playing={playVideo}
-                            width={'100%'}
-                            height={'100%'}
-                            url={'/emergencia.mp4'}
-                            controls
-                            onEnded={handleVideoEnded}
-                        />
-                    </div>
-                }
+                <div>
+                    <h1>Gracias por ser nuestra presidenta, Elena.</h1>
+                </div>
             </div>
         </>
     );
