@@ -176,7 +176,9 @@ const FaceView = ({ }) => {
         <>
             <div>
                 <div>
-                    <h1>Gracias por ser nuestra presidenta, Elena.</h1>
+                    <h1 style={{
+                        fontSize: '70px'
+                    }}>Gracias por ser nuestra presidenta, Elena.</h1>
                 </div>
             </div>
         </>
