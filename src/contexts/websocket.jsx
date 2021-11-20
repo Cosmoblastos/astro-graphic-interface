@@ -17,7 +17,8 @@ const channels = {
     voiceCommand: 'voiceCommand',
     faceRecognition: 'faceRecognition',
     faceIdentification: 'faceIdentification',
-    playVideo: 'playVideo'
+    playVideo: 'playVideo',
+    init: 'init'
 }
 
 const WebsocketContext = React.createContext();
@@ -28,7 +29,8 @@ const WebsocketProvider = ({ ...rest }) => {
         [voiceCommand, setVoiceCommand] = useState(''),
         [img, setImg] = useState(null),
         [isRecording, setIsRecording] = useState(false),
-        [playVideoCommand, setPlayVideoCommand] = useState(null);
+        [playVideoCommand, setPlayVideoCommand] = useState(null),
+        [initCommand, setInitCommand] = useState(null);
 
     useEffect(() => {
         socket.on(channels.voiceCommand, data => {
@@ -61,6 +63,11 @@ const WebsocketProvider = ({ ...rest }) => {
             setPlayVideoCommand(data);
         });
 
+        socket.on(channels.init, data => {
+            console.log("Init: ", data);
+            setInitCommand(data);
+        });
+
         return () => {
             socket.off(channels.voiceCommand);
             socket.off(channels.voiceDetected);
@@ -69,7 +76,7 @@ const WebsocketProvider = ({ ...rest }) => {
             socket.off(channels.faceRecognition);
             socket.off(channels.playVideo);
         }
-    }, [setVoiceCommand, setImg]);
+    }, [setVoiceCommand, setImg, setInitCommand]);
 
     const value = {
         voiceCommand,
@@ -81,7 +88,9 @@ const WebsocketProvider = ({ ...rest }) => {
         setIsRecording,
         isRecording,
         playVideoCommand,
-        setPlayVideoCommand
+        setPlayVideoCommand,
+        initCommand,
+        setInitCommand
     };
 
     return <WebsocketContext.Provider value={value} {...rest} />;
