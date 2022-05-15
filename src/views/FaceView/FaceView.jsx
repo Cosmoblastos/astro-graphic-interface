@@ -88,6 +88,16 @@ const FaceView = () => {
         }
     }, []);
 
+    const resetView = () => {
+        setShowImage(false);
+        setImageSource(null);
+        setShowVideo(false);
+        setShowMetrics(false);
+        setFrequency(0);
+        setOximeter(0);
+        setVideoSource(null);
+    };
+
     const surprise = () => {
         setLeftHeight(bigSize);
         setLeftWidth(bigSize);
@@ -155,6 +165,8 @@ const FaceView = () => {
         if (!data) return;
         const eventName = data?.voiceEvents?.type;
         if (!eventName) return;
+
+        resetView();
 
         switch (eventName) {
             case 'metrics':
@@ -232,7 +244,7 @@ const FaceView = () => {
                 playing={playing}
                 width={'100%'}
                 height={'100%'}
-                url={'/emergencia.mp4'}
+                url={videoSource}
                 controls
                 onEnded={handleVideoEnded}
             />
@@ -243,7 +255,7 @@ const FaceView = () => {
         <div>
             <img src={imageSource} className="full_screen_image"/>
         </div>
-    </>
+    </>;
 
     return <>
         <div className="face">
