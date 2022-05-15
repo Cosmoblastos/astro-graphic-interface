@@ -48,6 +48,10 @@ const randomNumber = (min, max) => {
     return Math.floor(Math.random() * (max - min) + min);
 }
 
+const stabilization = (number, duration) => {
+
+}
+
 const FaceView = () => {
     const {loading, data, error} = useSubscription(COMMANDS_SUBSCRIPTION);
     const [leftWidth, setLeftWidth] = useState(normalSize),
@@ -59,7 +63,13 @@ const FaceView = () => {
         [leftTranslateY, setLeftTranslateY] = useState("-" + normalYTranslate),
         [rightTranslateY, setRightTranslateY] = useState("-" + normalYTranslate),
         [showVideo, setShowVideo] = useState(false),
-        [playing, setPlaying] = useState(false);
+        [showMetrics, setShowMetrics] = useState(false),
+        [playing, setPlaying] = useState(false),
+        [oximeter, setOximeter] = useState(0),
+        [frequency, setFrequency] = useState(0),
+        [videoSource, setVideoSource] = useState(null),
+        [imageSource, setImageSource] = useState(null),
+        [showImage, setShowImage] = useState(false);
 
     useEffect(() => {
         const blinking = setInterval(() => {
@@ -142,10 +152,45 @@ const FaceView = () => {
     useEffect(() => {
         if (loading) return;
         if (error) return console.error(error);
+        if (!data) return;
         const eventName = data?.voiceEvents?.type;
         if (!eventName) return;
 
         switch (eventName) {
+            case 'metrics':
+                setShowMetrics(true);
+                let frequencyInterval = setInterval(() => {
+                    setFrequency(randomNumber(80, 90))
+                }, 1000);
+                let oximeterInterval = setInterval(() => {
+                    setOximeter(randomNumber(90, 100))
+                }, 1000);
+                setTimeout(() => {
+                    clearInterval(frequencyInterval);
+                    clearInterval(oximeterInterval);
+                    setTimeout(() => {
+                        setShowMetrics(false);
+                    }, 3000);
+                }, 8000);
+                break;
+            case 'show_video':
+                let videoName = `/${data?.voiceEvents?.payload}`;
+                setVideoSource(videoName);
+                setTimeout(() => {
+                    setShowVideo(true);
+                }, 0);
+                break;
+            case 'show_image':
+                let imageName = `/${data?.voiceEvents?.payload}`;
+                setImageSource(imageName);
+                setTimeout(() => {
+                    setShowImage(imageName);
+                }, 0);
+                setTimeout(() => {
+                    setShowImage(false);
+                    setImageSource(null);
+                }, 10000); //Fix momentaneo, no hacer esto en casa
+                break;
             case 'emergencia':
                 //cara de atención
                 //poner video de emergencia
@@ -170,40 +215,52 @@ const FaceView = () => {
         setShowVideo(false);
     }, []);
 
-    return <>
+    if (showMetrics) return <>
+        <div className="metrics">
+            <div className="metric frequency">
+                {frequency} <span className="metric_name">FC</span>
+            </div>
+            <div className="metric oximeter">
+                {oximeter} <span className="metric_name">SpO2</span>
+            </div>
+        </div>
+    </>;
+
+    if (showVideo && videoSource) return <>
         <div>
-            {
-                !showVideo &&
-                <div className="face">
-                    <Eye
-                        transition={"all 0.4s"}
-                        width={leftWidth}
-                        height={leftHeight}
-                        translateX={leftTranslateX}
-                        translateY={leftTranslateY}
-                    />
-                    <Eye
-                        transition={"all 0.4s"}
-                        width={rightWidth}
-                        height={rightHeight}
-                        translateX={rightTranslateX}
-                        translateY={rightTranslateY}
-                    />
-                </div>
-            }
-            {
-                showVideo &&
-                <div>
-                    <ReactPlayer
-                        playing={playing}
-                        width={'100%'}
-                        height={'100%'}
-                        url={'/emergencia.mp4'}
-                        controls
-                        onEnded={handleVideoEnded}
-                    />
-                </div>
-            }
+            <ReactPlayer
+                playing={playing}
+                width={'100%'}
+                height={'100%'}
+                url={'/emergencia.mp4'}
+                controls
+                onEnded={handleVideoEnded}
+            />
+        </div>
+    </>;
+
+    if (showImage && imageSource) return <>
+        <div>
+            <img src={imageSource} className="full_screen_image"/>
+        </div>
+    </>
+
+    return <>
+        <div className="face">
+            <Eye
+                transition={"all 0.4s"}
+                width={leftWidth}
+                height={leftHeight}
+                translateX={leftTranslateX}
+                translateY={leftTranslateY}
+            />
+            <Eye
+                transition={"all 0.4s"}
+                width={rightWidth}
+                height={rightHeight}
+                translateX={rightTranslateX}
+                translateY={rightTranslateY}
+            />
         </div>
     </>;
 };
