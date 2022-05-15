@@ -197,7 +197,10 @@ const FaceView = () => {
                     setTemperature(randomNumber(35, 36.9))
                 }, 1000);
                 setTimeout(() => {
-                    clearInterval(temperatureInterval)
+                    clearInterval(temperatureInterval);
+                    setTimeout(() => {
+                        setShowTemperature(false);
+                    }, 3000);
                 }, 8000);
                 break;
             case 'show_video':
