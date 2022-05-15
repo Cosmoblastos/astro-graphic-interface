@@ -205,6 +205,7 @@ const FaceView = () => {
                 break;
             case 'show_video':
                 let videoName = `/${data?.voiceEvents?.payload}`;
+                console.log(videoName);
                 setVideoSource(videoName);
                 setTimeout(() => {
                     setShowVideo(true);
