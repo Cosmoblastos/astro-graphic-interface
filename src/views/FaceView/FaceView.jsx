@@ -201,7 +201,7 @@ const FaceView = () => {
                 setTimeout(() => {
                     setShowImage(false);
                     setImageSource(null);
-                }, 10000); //Fix momentaneo, no hacer esto en casa
+                }, 100000); //Fix momentaneo, no hacer esto en casa
                 break;
             case 'emergencia':
                 //cara de atención
