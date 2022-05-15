@@ -67,6 +67,8 @@ const FaceView = () => {
         [playing, setPlaying] = useState(false),
         [oximeter, setOximeter] = useState(0),
         [frequency, setFrequency] = useState(0),
+        [temperature, setTemperature] = useState(0),
+        [showTemperature, setShowTemperature] = useState(true),
         [videoSource, setVideoSource] = useState(null),
         [imageSource, setImageSource] = useState(null),
         [showImage, setShowImage] = useState(false);
@@ -96,6 +98,8 @@ const FaceView = () => {
         setFrequency(0);
         setOximeter(0);
         setVideoSource(null);
+        setShowTemperature(false);
+        setTemperature(0);
     };
 
     const surprise = () => {
@@ -167,6 +171,10 @@ const FaceView = () => {
         if (!eventName) return;
 
         switch (eventName) {
+            case 'listen':
+                resetView();
+                listen();
+                break;
             case 'metrics':
                 setShowMetrics(true);
                 let frequencyInterval = setInterval(() => {
@@ -183,6 +191,15 @@ const FaceView = () => {
                     }, 3000);
                 }, 8000);
                 break;
+            case 'temperature':
+                setShowTemperature(true);
+                let temperatureInterval = setInterval(() => {
+                    setTemperature(randomNumber(35, 36.9))
+                }, 1000);
+                setTimeout(() => {
+                    clearInterval(temperatureInterval)
+                }, 8000);
+                break;
             case 'show_video':
                 let videoName = `/${data?.voiceEvents?.payload}`;
                 setVideoSource(videoName);
@@ -191,7 +208,6 @@ const FaceView = () => {
                 }, 0);
                 break;
             case 'show_image':
-                resetView();
                 let imageName = `/${data?.voiceEvents?.payload}`;
                 setImageSource(imageName);
                 setTimeout(() => {
@@ -233,6 +249,14 @@ const FaceView = () => {
             </div>
             <div className="metric oximeter">
                 {oximeter} <span className="metric_name">SpO2</span>
+            </div>
+        </div>
+    </>;
+
+    if (showTemperature) return <>
+        <div className="metrics">
+            <div className="metric frequency">
+                {temperature} <span className="metric_name">ºC</span>
             </div>
         </div>
     </>;
