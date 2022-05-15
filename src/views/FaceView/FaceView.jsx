@@ -68,7 +68,7 @@ const FaceView = () => {
         [oximeter, setOximeter] = useState(0),
         [frequency, setFrequency] = useState(0),
         [temperature, setTemperature] = useState(0),
-        [showTemperature, setShowTemperature] = useState(true),
+        [showTemperature, setShowTemperature] = useState(false),
         [videoSource, setVideoSource] = useState(null),
         [imageSource, setImageSource] = useState(null),
         [showImage, setShowImage] = useState(false);
