@@ -268,7 +268,7 @@ const FaceView = () => {
         <div>
             <ReactPlayer
                 playing={playing}
-                width={'100%'}
+                width={'100vw'}
                 height={'100vh'}
                 url={videoSource}
                 controls
