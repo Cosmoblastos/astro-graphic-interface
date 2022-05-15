@@ -166,8 +166,6 @@ const FaceView = () => {
         const eventName = data?.voiceEvents?.type;
         if (!eventName) return;
 
-        resetView();
-
         switch (eventName) {
             case 'metrics':
                 setShowMetrics(true);
@@ -193,6 +191,7 @@ const FaceView = () => {
                 }, 0);
                 break;
             case 'show_image':
+                resetView();
                 let imageName = `/${data?.voiceEvents?.payload}`;
                 setImageSource(imageName);
                 setTimeout(() => {
@@ -243,7 +242,7 @@ const FaceView = () => {
             <ReactPlayer
                 playing={playing}
                 width={'100%'}
-                height={'100%'}
+                height={'100vh'}
                 url={videoSource}
                 controls
                 onEnded={handleVideoEnded}
