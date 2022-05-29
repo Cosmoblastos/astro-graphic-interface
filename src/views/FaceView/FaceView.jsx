@@ -52,6 +52,18 @@ const stabilization = (number, duration) => {
 
 }
 
+function isValidHttpUrl(string) {
+    let url;
+    
+    try {
+      url = new URL(string);
+    } catch (_) {
+      return false;  
+    }
+  
+    return url.protocol === "http:" || url.protocol === "https:";
+}
+
 const FaceView = () => {
     const {loading, data, error} = useSubscription(COMMANDS_SUBSCRIPTION);
     const [leftWidth, setLeftWidth] = useState(normalSize),
@@ -71,7 +83,9 @@ const FaceView = () => {
         [showTemperature, setShowTemperature] = useState(false),
         [videoSource, setVideoSource] = useState(null),
         [imageSource, setImageSource] = useState(null),
-        [showImage, setShowImage] = useState(false);
+        [showImage, setShowImage] = useState(false),
+        [showIframe, setShowIframe] = useState(false),
+        [iframeSource, setIframeSource] = useState(null);
 
     useEffect(() => {
         const blinking = setInterval(() => {
@@ -100,6 +114,8 @@ const FaceView = () => {
         setVideoSource(null);
         setShowTemperature(false);
         setTemperature(0);
+        setShowIframe(false);
+        setIframeSource(null);
     };
 
     const surprise = () => {
@@ -174,6 +190,15 @@ const FaceView = () => {
             case 'listen':
                 resetView();
                 listen();
+                break;
+            case 'show_webpage':
+                const webPageURL = data?.voiceEvents?.payload;
+                if (!webPageURL) return;
+                if (!isValidHttpUrl(webPageURL)) return;
+                setIframeSource(webPageURL);
+                setTimeout(() => {
+                    setShowIframe(true);
+                }, 0);
                 break;
             case 'metrics':
                 setShowMetrics(true);
@@ -282,6 +307,10 @@ const FaceView = () => {
         <div>
             <img src={imageSource} className="full_screen_image"/>
         </div>
+    </>;
+
+    if (showIframe && iframeSource) return <>
+        <iframe width={'100%'} height={'500px'} src={iframeSource} title={'ComunicationTool'} style={{border: 0}}/>
     </>;
 
     return <>
