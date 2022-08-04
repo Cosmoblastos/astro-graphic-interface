@@ -1,0 +1,23 @@
+.image-container {
+
+}
+
+.image {
+    width: 100vw;
+    height: 100vh;
+}
+
+.image-container .close-button {
+    position: absolute;
+    color: #fff;
+    font-weight: 0;
+    font-size: 1.5rem;
+    border-radius: 50%;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 0;
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0.5);
+    top: 1rem;
+    left: 1rem;
+}
