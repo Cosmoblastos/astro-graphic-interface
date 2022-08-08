@@ -3,6 +3,7 @@ import {useSubscription} from "@apollo/client";
 import {COMMANDS_SUBSCRIPTION} from "./components/gql/face";
 import EventContext from "./components/core/EventContext";
 import {useHistory} from "react-router-dom";
+import Template from "./components/core/Template";
 
 function EventHandlerLayer ({ children }) {
     const voiceEventSub = useSubscription(COMMANDS_SUBSCRIPTION),
@@ -21,8 +22,23 @@ function EventHandlerLayer ({ children }) {
                 //Show face view and set face to listening mode
                 router.replace('/');
                 break;
+            case 'show_view':
+                if (!data) {
+                    console.warn('Invalid path provided to show_view command');
+                    return;
+                }
+                router.replace(data);
+                break;
             case 'show_webpage':
                 router.push({ pathname: '/webpage', state: { payload: data } });
+                break;
+            case 'show_video':
+                if (!data) return;
+                router.push({ pathname: '/video', state: { payload: data } });
+                break;
+            case 'show_image':
+                if (!data) return;
+                router.push({ pathname: '/image', state: { payload: data } });
                 break;
             case 'metrics':
                 // setShowMetrics(true);
@@ -52,14 +68,6 @@ function EventHandlerLayer ({ children }) {
                 //         setShowTemperature(false);
                 //     }, 3000);
                 // }, 8000);
-                break;
-            case 'show_video':
-                if (!data) return;
-                router.push({ pathname: '/video', state: { payload: data } });
-                break;
-            case 'show_image':
-                if (!data) return;
-                router.push({ pathname: '/image', state: { payload: data } });
                 break;
             case 'emergencia':
                 //cara de atención
@@ -98,7 +106,9 @@ function EventHandlerLayer ({ children }) {
         payload,
         playing, setPlaying
     }}>
-        {children}
+        <Template>
+            {children}
+        </Template>
     </EventContext.Provider>
 }
 

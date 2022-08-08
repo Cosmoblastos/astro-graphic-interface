@@ -1,4 +1,3 @@
-import "./App.css";
 import { FaceView } from "./views/face";
 import {Route, BrowserRouter, Switch} from "react-router-dom";
 import {
@@ -14,6 +13,10 @@ import VideoView from "./views/video/VideoView";
 import ImageView from "./views/image/ImageView";
 import WebPageView from "./views/webpage/WebPageView";
 import MetricsView from "./views/metrics/MetricsView";
+import ConfigView from "./views/config";
+import { ThemeProvider } from "@mui/material/styles";
+import Theme from "./components/core/Theme";
+import {CssBaseline} from "@mui/material";
 
 const wsLink = new WebSocketLink({
     uri: 'ws://localhost:4000',
@@ -44,9 +47,10 @@ const client = new ApolloClient({
 })
 
 function App() {
-    return <div className={'App'}>
-        <BrowserRouter>
-            <ApolloProvider client={client}>
+    return <ApolloProvider client={client}>
+        <ThemeProvider theme={Theme}>
+            <CssBaseline />
+            <BrowserRouter>
                 <EventHandlerLayer>
                     <Switch>
                         <Route exact path={"/"}>
@@ -64,11 +68,14 @@ function App() {
                         <Route exact path={'/metrics'}>
                             <MetricsView />
                         </Route>
+                        <Route path={'/config'}>
+                            <ConfigView />
+                        </Route>
                     </Switch>
                 </EventHandlerLayer>
-            </ApolloProvider>
-        </BrowserRouter>
-    </div>
+            </BrowserRouter>
+        </ThemeProvider>
+    </ApolloProvider>
 }
 
 export default App;

@@ -1,19 +1,36 @@
-import React, {useCallback} from 'react';
+import React from 'react';
 import './FaceView.css';
 import { useState, useEffect } from 'react';
-import {useSubscription} from "@apollo/client";
-import ReactPlayer from 'react-player'
 import {Eye} from "../../components/Face";
-import {COMMANDS_SUBSCRIPTION} from "../../components/gql/face";
 import {
-    isValidHttpUrl,
     randomNumber
 } from "./utils";
+import {Box} from "@mui/material";
+import {makeStyles} from "@mui/styles";
 
-const normalSize = "120px";
+const normalSize = "130px";
 const bigSize = "170px";
-const normalXTranslate = "20px";
-const normalYTranslate = "20px";
+const normalXTranslate = "30px";
+const normalYTranslate = "30px";
+
+const useStyles = makeStyles((theme) => ({
+    root: {
+        width: '100%',
+        height: '100vh',
+        display: 'grid',
+        placeItems: 'center',
+        backgroundColor: theme.palette.background.default
+    },
+    face: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '80vw',
+        height: '60vh',
+        padding: '10px',
+        borderRadius: '35px',
+    }
+}));
 
 const FaceView = () => {
     const [leftWidth, setLeftWidth] = useState(normalSize),
@@ -24,8 +41,7 @@ const FaceView = () => {
         [rightTranslateX, setRightTranslateX] = useState(normalXTranslate),
         [leftTranslateY, setLeftTranslateY] = useState("-" + normalYTranslate),
         [rightTranslateY, setRightTranslateY] = useState("-" + normalYTranslate),
-        [temperature, setTemperature] = useState(0),
-        [showTemperature, setShowTemperature] = useState(false);
+        classes = useStyles();
 
     const surprise = () => {
         setLeftHeight(bigSize);
@@ -105,16 +121,8 @@ const FaceView = () => {
         }
     }, []);
 
-    if (showTemperature) return <>
-        <div className="metrics">
-            <div className="metric frequency">
-                {temperature} <span className="metric_name">ºC</span>
-            </div>
-        </div>
-    </>;
-
-    return <div className={'Face-container'}>
-        <div className="face">
+    return <Box className={classes.root}>
+        <div className={classes.face}>
             <Eye
                 transition={"all 0.4s"}
                 width={leftWidth}
@@ -130,7 +138,7 @@ const FaceView = () => {
                 translateY={rightTranslateY}
             />
         </div>
-    </div>
+    </Box>
 };
 
 export default FaceView;
