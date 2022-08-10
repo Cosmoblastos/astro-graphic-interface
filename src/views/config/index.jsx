@@ -1,6 +1,7 @@
 import React from 'react';
 import { Switch, Route, useRouteMatch } from 'react-router-dom';
-import WifiConfigView from './wifiConfigView';
+import WifiConfigView from './WifiConfigView';
+import UsersConfigView from './UsersConfigView';
 
 export default function ConfigView () {
     const { path } = useRouteMatch();
@@ -8,6 +9,9 @@ export default function ConfigView () {
     return <Switch>
         <Route exact path={`${path}/wifi`}>
             <WifiConfigView />
+        </Route>
+        <Route exact path={`${path}/users`}>
+            <UsersConfigView />
         </Route>
     </Switch>
 }

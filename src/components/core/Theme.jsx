@@ -70,6 +70,13 @@ const Theme = createTheme({
         MuiCircularProgress: {
             styleOverrides: {
             }
+        },
+        MuiCard: {
+            styleOverrides: {
+                root: {
+                    boxShadow: 'none'
+                }
+            }
         }
     }
 });

@@ -100,9 +100,10 @@ function WifiPasswordDialog ({ selectedNetwork, resetNetwork }) {
 
     const handleFormSubmit = useCallback(async (e) => {
         e.preventDefault();
-        delete selectedNetwork.__typedef;
         await setNetwork({ variables: {
-            network: selectedNetwork,
+            network: {
+                ssid: selectedNetwork.ssid,
+            },
             password: networkPassword
          } });
     }, [networkPassword, selectedNetwork]);
