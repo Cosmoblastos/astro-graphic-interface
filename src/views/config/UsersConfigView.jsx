@@ -1,12 +1,15 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useContext, useEffect, useState} from 'react';
 import {Box, Card, CardActionArea, CardContent, IconButton, Typography} from "@mui/material";
 import {makeStyles} from "@mui/styles";
 import AddIcon from '@mui/icons-material/Add';
+import {gql, useQuery} from "@apollo/client";
+import EventContext from "../../components/core/EventContext";
+import LoadingView from "../Loading";
 
 const TEST_DATA = [
     {
-        id: 'invited',
-        name: 'Invited',
+        id: 'guest',
+        name: 'Guest',
         color: '#70DDFF',
     },
     {
@@ -15,6 +18,30 @@ const TEST_DATA = [
         color: 'red'
     }
 ];
+const LIST_DATA_QUERY = gql`
+    query listUsers ($filter: UsersFilter, $ord: String, $asc: Boolean, $num: Int, $pag: Int) {
+        users (
+            filter: $filter
+            ord: $ord
+            asc: $asc
+            num: $num
+            pag: $pag
+        ) {
+            totalCount
+            data {
+                id
+                fullName
+                firstName
+                lastName
+                color
+                createdAt
+                updatedAt
+                deletedAt
+            }
+        }
+    }
+`;
+
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -92,8 +119,8 @@ function UserCard ({ data, onClick }) {
     }, [data, onClick]);
 
     return <SquareCard
-        icon={data?.name[0]?.toUpperCase() || '--'}
-        label={data?.name}
+        icon={data?.fullName[0]?.toUpperCase() || '--'}
+        label={data?.fullName}
         styles={{
             backgroundColor: data?.color || '#70DDFF',
         }}
@@ -103,7 +130,8 @@ function UserCard ({ data, onClick }) {
 
 export default function UsersConfigView () {
     const classes = useStyles(),
-        [users, setUsers] = useState(TEST_DATA);
+        { data, loading, error } = useQuery(LIST_DATA_QUERY),
+        [users, setUsers] = useState([]);
 
     const handleUserSelected = useCallback((selectedUser) => {
         console.log(selectedUser);
@@ -113,17 +141,22 @@ export default function UsersConfigView () {
         console.log('Add new user');
     }, []);
 
+    useEffect(() => {
+        if (!data) return;
+        setUsers(data?.users?.data);
+    }, [data]);
+
+    if (loading) return <LoadingView />;
+
     return <Box className={classes.root}>
         <Box className={classes.userCardsContainer}>
             {
-                users?.length > 0 && users.map((user) => (
+                users?.length > 0 && users?.map((user) => (
                     <UserCard key={user?.id} data={user} onClick={handleUserSelected} />
                 ))
             }
             <SquareCard
-                icon={<IconButton size={'large'}>
-                    <AddIcon fontSize={'large'}/>
-                </IconButton>}
+                icon={<AddIcon fontSize={'large'}/>}
                 label={'New User'}
                 styles={{
                     backgroundColor: 'transparent',

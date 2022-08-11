@@ -1,7 +1,7 @@
 import React from 'react';
 
 const Context = React.createContext({
-    payload: null
+    payload: null,
 });
 
 export default Context;
