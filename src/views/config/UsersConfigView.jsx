@@ -5,6 +5,7 @@ import AddIcon from '@mui/icons-material/Add';
 import {gql, useQuery} from "@apollo/client";
 import EventContext from "../../components/core/EventContext";
 import LoadingView from "../Loading";
+import {useHistory} from "react-router-dom";
 
 const TEST_DATA = [
     {
@@ -131,15 +132,16 @@ function UserCard ({ data, onClick }) {
 export default function UsersConfigView () {
     const classes = useStyles(),
         { data, loading, error } = useQuery(LIST_DATA_QUERY),
-        [users, setUsers] = useState([]);
+        [users, setUsers] = useState([]),
+        history = useHistory();
 
     const handleUserSelected = useCallback((selectedUser) => {
         console.log(selectedUser);
     }, []);
 
     const handleAddNewUser = useCallback(() => {
-        console.log('Add new user');
-    }, []);
+        history.push('/config/newUser');
+    }, [history]);
 
     useEffect(() => {
         if (!data) return;
