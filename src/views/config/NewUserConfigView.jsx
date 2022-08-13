@@ -1,10 +1,8 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {makeStyles} from "@mui/styles";
 import {Box, Button, Fade, Typography} from "@mui/material";
 import AssistantFace from "./AssistantFace";
 import ArrowCircleRightIcon from '@mui/icons-material/ArrowCircleRight';
-import {useApolloClient, useSubscription} from "@apollo/client";
-import {gql} from "@apollo/client";
 import VoiceInstruction from "./VoiceInstruction";
 
 const useStyles = makeStyles((theme) => ({

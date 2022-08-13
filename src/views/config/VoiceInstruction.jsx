@@ -31,13 +31,16 @@ const useStyles = makeStyles((theme) => ({
 function VoiceInstruction ({ instruction, children  }) {
     const voiceInstructionResponse = useSubscription(
             VOICE_INSTRUCTION_SUBSCRIPTION,
-            { variables: { instruction } }
+            {
+                variables: { instruction },
+                shouldResubscribe: false
+            }
         ),
         classes = useStyles();
 
     useEffect(() => {
         if (voiceInstructionResponse?.data) console.log(voiceInstructionResponse?.data);
-        if (voiceInstructionResponse?.error) console.log(voiceInstructionResponse?.error)
+        if (voiceInstructionResponse?.error) console.log(voiceInstructionResponse?.error);
     }, [voiceInstructionResponse]);
 
     return <div className={classes.root}>
