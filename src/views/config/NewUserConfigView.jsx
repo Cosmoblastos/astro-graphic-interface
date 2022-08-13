@@ -1,8 +1,11 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {makeStyles} from "@mui/styles";
 import {Box, Button, Fade, Typography} from "@mui/material";
 import AssistantFace from "./AssistantFace";
 import ArrowCircleRightIcon from '@mui/icons-material/ArrowCircleRight';
+import {useApolloClient, useSubscription} from "@apollo/client";
+import {gql} from "@apollo/client";
+import VoiceInstruction from "./VoiceInstruction";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -20,9 +23,36 @@ const useStyles = makeStyles((theme) => ({
         flexDirection: 'column'
     },
     instruction: {
-        width: '70%',
+        display: 'flex',
+        justifyContent: 'center'
     }
 }));
+
+const VIEW_INSTRUCTIONS = [
+    {
+        say: '¡Hello! I\'m Astro, your personal medical assistant',
+        waitForResponse: false,
+    },
+    {
+        say: 'What\'s your name?',
+        waitForResponse: true,
+    },
+    {
+        say: 'Nice to meet you (name)',
+    },
+    {
+        say: 'To provide you better assistance, I would like to ask you some questions.',
+        waitForResponse: false,
+    },
+    {
+        say: 'You should fill the necessary fields, and the another ones can be edited after this process',
+        waitForResponse: false,
+    },
+    {
+        say: 'Let\'s start',
+        waitForResponse: false,
+    },
+];
 
 export default function NewUserConfigView () {
     const classes = useStyles(),
@@ -32,7 +62,7 @@ export default function NewUserConfigView () {
     useEffect(() => {
         setTimeout(() => {
             setShowContinue(true);
-        }, 2 * 1000);
+        }, 1000);
     }, []);
 
     const continueButton = <Fade in={showContinue} timeout={3 * 1000}>
@@ -51,10 +81,12 @@ export default function NewUserConfigView () {
                 <div className={classes.step}>
                     <AssistantFace />
                     <Box p={4} className={classes.instruction}>
-                        <Typography variant={'h5'} align={'center'}>
-                            ¡Hello! <br />
-                            I'm Astro, your new personal medical assistant...
-                        </Typography>
+                        <VoiceInstruction instruction={{ say: '¡Hello! I\'m Astro, your new personal medical assistant' }}>
+                            <Typography variant={'h5'} align={'center'}>
+                                ¡Hello! <br />
+                                I'm Astro, your new personal medical assistant...
+                            </Typography>
+                        </VoiceInstruction>
                     </Box>
                     {continueButton}
                 </div>
@@ -65,9 +97,11 @@ export default function NewUserConfigView () {
                 <div className={classes.step}>
                     <AssistantFace />
                     <Box p={4} className={classes.instruction}>
-                        <Typography variant={'h5'} align={'center'}>
-                            To give you better assistance, I would like to know more about you...
-                        </Typography>
+                        <VoiceInstruction instruction={{ say: 'To give you better assistance, I would like to know more about you' }}>
+                            <Typography variant={'h5'} align={'center'}>
+                                To give you better assistance, I would like to know more about you...
+                            </Typography>
+                        </VoiceInstruction>
                     </Box>
                     {continueButton}
                 </div>
