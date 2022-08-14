@@ -28,27 +28,36 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-function VoiceInstruction ({ instruction, children  }) {
-    const voiceInstructionResponse = useSubscription(
+function VoiceInstruction ({ instruction, children, onSpeaking, onSpeakingDone  }) {
+    const { data, loading, error } = useSubscription(
             VOICE_INSTRUCTION_SUBSCRIPTION,
             {
                 variables: { instruction },
                 shouldResubscribe: false
             }
         ),
+        [initialized, setInitialized] = useState(false),
         classes = useStyles();
 
     useEffect(() => {
-        if (voiceInstructionResponse?.data) console.log(voiceInstructionResponse?.data);
-        if (voiceInstructionResponse?.error) console.log(voiceInstructionResponse?.error);
-    }, [voiceInstructionResponse]);
+        onSpeaking(loading);
+        if (data) console.log(data);
+        if (error) console.log(error);
+        if (!loading && initialized && typeof onSpeakingDone === 'function') onSpeakingDone();
+    }, [data, error, loading]);
+
+    useEffect(() => {
+        setInitialized(true);
+    });
 
     return <div className={classes.root}>
         {children}
         <div className={classes.feedback}>
-            { voiceInstructionResponse?.loading && <CircularProgress style={{ color: 'aqua', width: '20px', height: '20px'}} /> }
-            { voiceInstructionResponse?.data && <CheckCircleOutlineIcon /> }
-            { voiceInstructionResponse?.error && <ErrorOutlineIcon /> }
+            { loading && <CircularProgress style={{
+                color: 'aqua', width: '20px', height: '20px'}}
+            /> }
+            { data && <CheckCircleOutlineIcon style={{ color: 'green' }} /> }
+            { error && <ErrorOutlineIcon style={{}} /> }
         </div>
     </div>
 }

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {makeStyles} from "@mui/styles";
 import {Box, Button, Fade, Typography} from "@mui/material";
 import AssistantFace from "./AssistantFace";
@@ -20,10 +20,6 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: 'center',
         flexDirection: 'column'
     },
-    instruction: {
-        display: 'flex',
-        justifyContent: 'center'
-    }
 }));
 
 const VIEW_INSTRUCTIONS = [
@@ -48,62 +44,120 @@ const VIEW_INSTRUCTIONS = [
     },
     {
         say: 'Let\'s start',
-        waitForResponse: false,
+        waitForResponse: true,
     },
 ];
 
-export default function NewUserConfigView () {
-    const classes = useStyles(),
+const useViewInstructionStyles = makeStyles(() => ({
+    step: {
+        width: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'column'
+    },
+    instruction: {
+        display: 'flex',
+        justifyContent: 'center'
+    }
+}))
+
+function ViewInstruction ({ speaking, active, instruction, onNext, onSpeaking }) {
+    const classes = useViewInstructionStyles(),
         [showContinue, setShowContinue] = useState(false),
-        [step, setStep] = useState(0);
+        [timeOutCount, setTimeOutCount] = useState(-1),
+        [reverseCountInterval, setReverseCountInterval] = useState(null);
+
+    const handleSpeakingDone = useCallback(() => {
+        setTimeOutCount(3);
+        const rci = setInterval(() => {
+            setTimeOutCount((prevTime) => prevTime - 1);
+        }, 1000);
+        setReverseCountInterval(rci);
+    }, [timeOutCount, setTimeOutCount]);
 
     useEffect(() => {
-        setTimeout(() => {
+        const t = setTimeout(() => {
             setShowContinue(true);
-        }, 1000);
+        }, 800);
+
+        return () => {
+            clearTimeout(t);
+        }
     }, []);
 
-    const continueButton = <Fade in={showContinue} timeout={3 * 1000}>
-        <Button
-            variant={'outlined'} color={'secondary'}
-            endIcon={<ArrowCircleRightIcon />}
-            onClick={() => setStep(step + 1)}
-        >
-            Continue
-        </Button>
-    </Fade>;
+    useEffect(() => {
+        if (timeOutCount === -1) return;
+        if (timeOutCount <= 0) {
+            if (reverseCountInterval) clearInterval(reverseCountInterval);
+            onNext();
+        }
+    }, [timeOutCount]);
+
+    return active && <Fade in={true} timeout={3 * 1000}>
+        <div className={classes.step}>
+            <Box p={4} className={classes.instruction}>
+                {
+                    instruction?.say && <VoiceInstruction
+                        instruction={instruction}
+                        onSpeaking={onSpeaking}
+                        onSpeakingDone={!instruction?.waitForResponse && handleSpeakingDone}
+                    >
+                        <Typography variant={'h5'} align={'center'}>
+                            {instruction.say}
+                        </Typography>
+                    </VoiceInstruction>
+                }
+            </Box>
+            <Box className={classes.instruction} pb={4}>
+                {
+                    (!speaking && timeOutCount !== -1) && <Typography
+                        variant={'caption'}
+                        onClick={() => clearInterval(reverseCountInterval)}
+                        style={{ cursor: 'pointer' }}
+                    >
+                        Automatically going next into: {timeOutCount}. Press to cancel.
+                    </Typography>
+                }
+            </Box>
+            {
+                (showContinue && !speaking) && <Fade in={showContinue} timeout={3 * 1000}>
+                    <Button
+                        variant={'outlined'} color={'secondary'}
+                        endIcon={<ArrowCircleRightIcon />}
+                        onClick={onNext}
+                    >
+                        Continue
+                    </Button>
+                </Fade>
+            }
+        </div>
+    </Fade>
+}
+
+export default function NewUserConfigView () {
+    const classes = useStyles(),
+        [step, setStep] = useState(0),
+        [speaking, setSpeaking] = useState(false);
+
+    const handleSpeaking = useCallback((isSpeaking) => {
+        setSpeaking(isSpeaking)
+    }, [ setSpeaking ]);
 
     return <Box className={classes.root}>
-        {
-            step === 0 && <Fade in={true} timeout={3 * 1000}>
-                <div className={classes.step}>
-                    <AssistantFace />
-                    <Box p={4} className={classes.instruction}>
-                        <VoiceInstruction instruction={{ say: '¡Hello! I\'m Astro, your new personal medical assistant' }}>
-                            <Typography variant={'h5'} align={'center'}>
-                                ¡Hello! <br />
-                                I'm Astro, your new personal medical assistant...
-                            </Typography>
-                        </VoiceInstruction>
-                    </Box>
-                    {continueButton}
-                </div>
-            </Fade>
-        }
-        {
-            step === 1 && <Fade in={true} timeout={3 * 1000}>
-                <div className={classes.step}>
-                    <AssistantFace />
-                    <Box p={4} className={classes.instruction}>
-                        <VoiceInstruction instruction={{ say: 'To give you better assistance, I would like to know more about you' }}>
-                            <Typography variant={'h5'} align={'center'}>
-                                To give you better assistance, I would like to know more about you...
-                            </Typography>
-                        </VoiceInstruction>
-                    </Box>
-                    {continueButton}
-                </div>
-            </Fade>
-        }
+        <div className={classes.step}>
+            <AssistantFace speaking={speaking} />
+            {
+                VIEW_INSTRUCTIONS.map((instruction, index) => {
+                    return <ViewInstruction
+                        instruction={instruction}
+                        speaking={speaking}
+                        active={step === index}
+                        onNext={() => setStep(index + 1)}
+                        onSpeaking={handleSpeaking}
+                    />
+                })
+            }
+        </div>
     </Box>;
 }
