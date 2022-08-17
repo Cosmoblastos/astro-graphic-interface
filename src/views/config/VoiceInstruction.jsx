@@ -10,6 +10,11 @@ const VOICE_INSTRUCTION_SUBSCRIPTION = gql`
         voiceInstruction (instruction: $instruction) {
             responseId
             success
+            data {
+                name
+                type
+                value
+            }
         }
     }
 `;
@@ -28,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-function VoiceInstruction ({ instruction, children, onSpeaking, onSpeakingDone  }) {
+function VoiceInstruction ({ instruction, children, onSpeaking, onSpeakingDone, onResponse  }) {
     const { data, loading, error } = useSubscription(
             VOICE_INSTRUCTION_SUBSCRIPTION,
             {
@@ -41,7 +46,7 @@ function VoiceInstruction ({ instruction, children, onSpeaking, onSpeakingDone  
 
     useEffect(() => {
         onSpeaking(loading);
-        if (data) console.log(data);
+        if (data) onResponse(data?.voiceInstruction?.data);
         if (error) console.log(error);
         if (!loading && initialized && typeof onSpeakingDone === 'function') onSpeakingDone();
     }, [data, error, loading]);

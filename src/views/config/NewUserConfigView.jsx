@@ -25,26 +25,26 @@ const useStyles = makeStyles((theme) => ({
 const VIEW_INSTRUCTIONS = [
     {
         say: '¡Hello! I\'m Astro, your personal medical assistant',
-        waitForResponse: false,
     },
     {
         say: 'What\'s your name?',
-        waitForResponse: true,
+        response: {
+            waitFor: true,
+            expectedType: 'string',
+            expectedValueName: 'name'
+        }
     },
     {
         say: 'Nice to meet you (name)',
     },
     {
         say: 'To provide you better assistance, I would like to ask you some questions.',
-        waitForResponse: false,
     },
     {
         say: 'You should fill the necessary fields, and the another ones can be edited after this process',
-        waitForResponse: false,
     },
     {
         say: 'Let\'s start',
-        waitForResponse: true,
     },
 ];
 
@@ -62,7 +62,7 @@ const useViewInstructionStyles = makeStyles(() => ({
     }
 }))
 
-function ViewInstruction ({ speaking, active, instruction, onNext, onSpeaking }) {
+function ViewInstruction ({ speaking, active, instruction, onNext, onSpeaking, onDataChange }) {
     const classes = useViewInstructionStyles(),
         [showContinue, setShowContinue] = useState(false),
         [timeOutCount, setTimeOutCount] = useState(-1),
@@ -100,8 +100,9 @@ function ViewInstruction ({ speaking, active, instruction, onNext, onSpeaking })
                 {
                     instruction?.say && <VoiceInstruction
                         instruction={instruction}
+                        onResponse={onDataChange}
                         onSpeaking={onSpeaking}
-                        onSpeakingDone={!instruction?.waitForResponse && handleSpeakingDone}
+                        onSpeakingDone={!instruction?.response?.waitFor && handleSpeakingDone}
                     >
                         <Typography variant={'h5'} align={'center'}>
                             {instruction.say}
@@ -138,23 +139,43 @@ function ViewInstruction ({ speaking, active, instruction, onNext, onSpeaking })
 export default function NewUserConfigView () {
     const classes = useStyles(),
         [step, setStep] = useState(0),
-        [speaking, setSpeaking] = useState(false);
+        [speaking, setSpeaking] = useState(false),
+        [userData, setUserData] = useState({
+            name: '',
+        });
+
+    const handleSetUserData = useCallback((newData) => {
+        setUserData((prevData) => ({
+            ...prevData,
+            [newData.name]: newData.value
+        }));
+    }, [userData]);
 
     const handleSpeaking = useCallback((isSpeaking) => {
         setSpeaking(isSpeaking)
     }, [ setSpeaking ]);
 
+    const mapWithVariables = useCallback((row) => {
+        const regex = new RegExp(/\(([^)]+)\)/);
+        if (!regex.test(row?.say)) return row;
+        const varName = (regex.exec(row?.say))[1];
+        const formValue = userData[varName];
+        row.say = row.say.replace(regex, formValue);
+        return row;
+    }, [userData]);
+
     return <Box className={classes.root}>
         <div className={classes.step}>
             <AssistantFace speaking={speaking} />
             {
-                VIEW_INSTRUCTIONS.map((instruction, index) => {
+                VIEW_INSTRUCTIONS.map(mapWithVariables).map((instruction, index) => {
                     return <ViewInstruction
                         instruction={instruction}
                         speaking={speaking}
                         active={step === index}
                         onNext={() => setStep(index + 1)}
                         onSpeaking={handleSpeaking}
+                        onDataChange={handleSetUserData}
                     />
                 })
             }
