@@ -46,7 +46,10 @@ function VoiceInstruction ({ instruction, children, onSpeaking, onSpeakingDone, 
 
     useEffect(() => {
         onSpeaking(loading);
-        if (data) onResponse(data?.voiceInstruction?.data);
+        if (
+            instruction?.response?.waitFor
+            && data?.voiceInstruction?.data
+        ) onResponse(data?.voiceInstruction?.data);
         if (error) console.log(error);
         if (!loading && initialized && typeof onSpeakingDone === 'function') onSpeakingDone();
     }, [data, error, loading]);

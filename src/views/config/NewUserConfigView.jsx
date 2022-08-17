@@ -160,6 +160,7 @@ export default function NewUserConfigView () {
         if (!regex.test(row?.say)) return row;
         const varName = (regex.exec(row?.say))[1];
         const formValue = userData[varName];
+        if (!formValue) return row;
         row.say = row.say.replace(regex, formValue);
         return row;
     }, [userData]);
@@ -170,6 +171,7 @@ export default function NewUserConfigView () {
             {
                 VIEW_INSTRUCTIONS.map(mapWithVariables).map((instruction, index) => {
                     return <ViewInstruction
+                        key={index}
                         instruction={instruction}
                         speaking={speaking}
                         active={step === index}
