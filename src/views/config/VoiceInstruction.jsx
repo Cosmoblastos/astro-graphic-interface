@@ -54,8 +54,13 @@ function VoiceInstruction ({ instruction, children, onSpeaking, onSpeakingDone, 
             onSpeakingDone();
             return;
         }
-        if (error) console.log(error);
-        if (!loading && initialized && typeof onSpeakingDone === 'function') onSpeakingDone();
+        if (error) console.error(error);
+        if (
+            !loading
+            && initialized
+            && !instruction?.response?.waitFor
+            && typeof onSpeakingDone === 'function'
+        ) onSpeakingDone();
     }, [data, error, loading]);
 
     useEffect(() => {

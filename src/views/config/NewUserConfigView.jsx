@@ -102,7 +102,7 @@ function ViewInstruction ({ speaking, active, instruction, onNext, onSpeaking, o
                         instruction={instruction}
                         onResponse={onDataChange}
                         onSpeaking={onSpeaking}
-                        onSpeakingDone={!instruction?.response?.waitFor && handleSpeakingDone}
+                        onSpeakingDone={handleSpeakingDone}
                     >
                         <Typography variant={'h5'} align={'center'}>
                             {instruction.say}
