@@ -49,7 +49,11 @@ function VoiceInstruction ({ instruction, children, onSpeaking, onSpeakingDone, 
         if (
             instruction?.response?.waitFor
             && data?.voiceInstruction?.data
-        ) onResponse(data?.voiceInstruction?.data);
+        ) {
+            onResponse(data?.voiceInstruction?.data);
+            onSpeakingDone();
+            return;
+        }
         if (error) console.log(error);
         if (!loading && initialized && typeof onSpeakingDone === 'function') onSpeakingDone();
     }, [data, error, loading]);
