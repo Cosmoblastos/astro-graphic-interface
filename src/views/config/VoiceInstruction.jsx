@@ -1,9 +1,10 @@
 import React, {useState, useEffect} from 'react';
 import { makeStyles } from "@mui/styles";
 import {gql, useSubscription} from "@apollo/client";
-import {Box, Button, CircularProgress, Fade, Typography} from "@mui/material";
+import {Box, Button, CircularProgress, Fade, IconButton, Typography} from "@mui/material";
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import ReplayIcon from '@mui/icons-material/Replay';
 
 const VOICE_INSTRUCTION_SUBSCRIPTION = gql`
     subscription voiceInstruction ($instruction: Instruction!) {
@@ -33,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-function VoiceInstruction ({ instruction, children, onSpeaking, onSpeakingDone, onResponse  }) {
+function VoiceInstruction ({ pause, instruction, children, onSpeaking, onSpeakingDone, onResponse, onReplay  }) {
     const { data, loading, error } = useSubscription(
             VOICE_INSTRUCTION_SUBSCRIPTION,
             {
@@ -45,6 +46,7 @@ function VoiceInstruction ({ instruction, children, onSpeaking, onSpeakingDone, 
         classes = useStyles();
 
     useEffect(() => {
+        if (pause) return;
         onSpeaking(loading);
         if (
             instruction?.response?.waitFor
@@ -61,7 +63,7 @@ function VoiceInstruction ({ instruction, children, onSpeaking, onSpeakingDone, 
             && !instruction?.response?.waitFor
             && typeof onSpeakingDone === 'function'
         ) onSpeakingDone();
-    }, [data, error, loading]);
+    }, [pause, data, error, loading]);
 
     useEffect(() => {
         setInitialized(true);
@@ -73,7 +75,11 @@ function VoiceInstruction ({ instruction, children, onSpeaking, onSpeakingDone, 
             { loading && <CircularProgress style={{
                 color: 'aqua', width: '20px', height: '20px'}}
             /> }
-            { data && <CheckCircleOutlineIcon style={{ color: 'green' }} /> }
+            { 
+                data && <IconButton onClick={onReplay}>
+                    <ReplayIcon style={{ color: 'aqua' }} />
+                </IconButton>
+            }
             { error && <ErrorOutlineIcon style={{}} /> }
         </div>
     </div>
