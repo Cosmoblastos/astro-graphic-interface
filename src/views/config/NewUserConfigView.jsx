@@ -11,6 +11,7 @@ import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import { useRef } from 'react';
 import ReplayIcon from '@mui/icons-material/Replay';
 import MicIcon from '@mui/icons-material/Mic';
+import { useHistory } from 'react-router-dom';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -223,6 +224,7 @@ function FlowControlTools ({
 
 export default function NewUserConfigView () {
     const classes = useStyles(),
+        router = useHistory(),
         [step, setStep] = useState(0),
         [isKeyboard, setIsKeyboard] = useState(false),
         [speaking, setSpeaking] = useState(false),
@@ -240,7 +242,7 @@ export default function NewUserConfigView () {
     };
 
     const handleCancel = () => {
-
+        router.replace('/');
     };
 
     const handleSetUserData = useCallback((newData) => {

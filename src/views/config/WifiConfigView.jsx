@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Box, Backdrop, CircularProgress, Container, Modal, DialogContent, DialogTitle, Divider, Grid, List, ListItem, ListItemIcon, ListItemText, Typography, TextField, Button, Dialog, Card, CardContent } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { gql, useApolloClient, useMutation, useQuery } from '@apollo/client';
-
+import ConfigViewTemplate from '../../components/templates/ConfigViewTemplate';
 import SignalWifi0BarIcon from '@mui/icons-material/SignalWifi0Bar';
 import NetworkWifi1BarIcon from '@mui/icons-material/NetworkWifi1Bar';
 import NetworkWifi2BarIcon from '@mui/icons-material/NetworkWifi2Bar';
@@ -182,28 +182,30 @@ export default function WifiConfigView () {
 
     if (loading) return <LoadingView message={'Loading...'}/>
 
-    return <Box className={classes.wifiContainer}>
-        <Typography variant={'h4'} gutterBottom>
-            Select a WIFI network
-        </Typography>
-        <br />
-        {
-            data?.networks?.length && <Box className={classes.wifiFloatingBox}>
-                <List sx={{ padding: 0 }}>
-                    {
-                        data.networks.map((network, index) => (
-                            <div key={`${index}-${network.ssid}`}>
-                                <WifiNetwork data={network} onSelect={(net) => setSelectedNetwork(net)}/>
-                                <Divider color={'#fff'} />
-                            </div>
-                        ))
-                    }
-                </List>
-            </Box>
-        }
-        <WifiPasswordDialog 
-            selectedNetwork={selectedNetwork} 
-            resetNetwork={() => setSelectedNetwork(null)}
-        />
-    </Box>
+    return <ConfigViewTemplate>
+        <Box className={classes.wifiContainer}>
+            <Typography variant={'h4'} gutterBottom>
+                Select a WIFI network
+            </Typography>
+            <br />
+            {
+                data?.networks?.length && <Box className={classes.wifiFloatingBox}>
+                    <List sx={{ padding: 0 }}>
+                        {
+                            data.networks.map((network, index) => (
+                                <div key={`${index}-${network.ssid}`}>
+                                    <WifiNetwork data={network} onSelect={(net) => setSelectedNetwork(net)}/>
+                                    <Divider color={'#fff'} />
+                                </div>
+                            ))
+                        }
+                    </List>
+                </Box>
+            }
+            <WifiPasswordDialog 
+                selectedNetwork={selectedNetwork} 
+                resetNetwork={() => setSelectedNetwork(null)}
+            />
+        </Box>
+    </ConfigViewTemplate>;
 }

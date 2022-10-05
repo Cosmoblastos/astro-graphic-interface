@@ -19,7 +19,6 @@ const useStyles = makeStyles((theme) => ({
         height: '100vh',
         display: 'grid',
         placeItems: 'center',
-        backgroundColor: theme.palette.background.default
     },
     face: {
         display: 'flex',
