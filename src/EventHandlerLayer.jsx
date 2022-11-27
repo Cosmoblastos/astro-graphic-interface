@@ -10,6 +10,7 @@ function EventHandlerLayer ({ children }) {
         router = useHistory(),
         [executedCommand, setExecutedCommand] = useState(null),
         [payload, setPayload] = useState(null),
+        [openDrawer, setOpenDrawer] = useState(false),
         [playing, setPlaying] = useState(false);
 
 
@@ -104,11 +105,12 @@ function EventHandlerLayer ({ children }) {
     return <EventContext.Provider value={{
         executedCommand,
         payload,
-        playing, setPlaying
+        playing, setPlaying,
+        openDrawer, setOpenDrawer
     }}>
-        <Template>
+        <>
             {children}
-        </Template>
+        </>
     </EventContext.Provider>
 }
 

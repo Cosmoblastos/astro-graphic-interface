@@ -1,6 +1,6 @@
 import { Box, Card, CardActionArea, CardContent, Typography } from '@mui/material';
 import {makeStyles} from "@mui/styles";
-
+import PropTypes from 'prop-types';
 
 const useSquareCardStyles = makeStyles((theme) => ({
     root: {
@@ -37,7 +37,7 @@ const useSquareCardStyles = makeStyles((theme) => ({
     }
 }));
 
-export default function SquareCard ({ icon, label, styles, onClick }) {
+function SquareCard ({ icon, label, styles, onClick }) {
     const classes = useSquareCardStyles(styles);
 
     return <Box className={classes.root}>
@@ -54,3 +54,12 @@ export default function SquareCard ({ icon, label, styles, onClick }) {
         </Typography>
     </Box>
 }
+
+SquareCard.propTypes = {
+    icon: PropTypes.element,
+    label: PropTypes.string,
+    styles: PropTypes.object,
+    onClick: PropTypes.func,
+};
+
+export default SquareCard;

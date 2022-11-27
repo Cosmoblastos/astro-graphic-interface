@@ -52,8 +52,8 @@ export default function ConfigView () {
         router = useHistory();
 
     return <Box className={classes.root}>
-        <Box>
-            <Typography>
+        <Box pb={2}>
+            <Typography variant={'h5'}>
                 Configuración
             </Typography>
         </Box>

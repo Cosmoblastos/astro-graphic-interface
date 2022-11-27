@@ -75,8 +75,11 @@ function VoiceInstruction ({ pause, instruction, children, onSpeaking, onSpeakin
             { loading && <CircularProgress style={{
                 color: 'aqua', width: '20px', height: '20px'}}
             /> }
+            {
+                (data && !onReplay) && <CheckCircleOutlineIcon />
+            }
             { 
-                data && <IconButton onClick={onReplay}>
+                (data && typeof onReplay === "function") && <IconButton onClick={onReplay}>
                     <ReplayIcon style={{ color: 'aqua' }} />
                 </IconButton>
             }
